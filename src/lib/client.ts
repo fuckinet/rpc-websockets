@@ -150,12 +150,15 @@ export default class CommonClient extends EventEmitter
                 id: rpc_id
             }
 
+            this.queue[rpc_id] = { promise: [resolve, reject] }
+
             this.socket.send(JSON.stringify(message), ws_opts, (error) =>
             {
                 if (error)
+                {
+                    this.queue[rpc_id] = null
                     return reject(error)
-
-                this.queue[rpc_id] = { promise: [resolve, reject] }
+                }
 
                 if (timeout)
                 {

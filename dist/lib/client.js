@@ -142,11 +142,15 @@ var CommonClient = /*#__PURE__*/function (_EventEmitter) {
           id: rpc_id
         };
 
+        _this2.queue[rpc_id] = {
+          promise: [resolve, reject]
+        };
+
         _this2.socket.send(JSON.stringify(message), ws_opts, function (error) {
-          if (error) return reject(error);
-          _this2.queue[rpc_id] = {
-            promise: [resolve, reject]
-          };
+          if (error) {
+            _this2.queue[rpc_id] = null;
+            return reject(error);
+          }
 
           if (timeout) {
             _this2.queue[rpc_id].timeout = setTimeout(function () {
